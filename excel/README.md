@@ -14,17 +14,17 @@
 
 **前端JavaScript导出Excel思路**
 
-> 如果把 生成Excel的工作交给前端浏览器去完成，后端这是做一个数据发包，而浏览器拿到数据后在自己本地客户端执行生成文件，占用的CPU资源也是客户端的，即使再大的数据也对服务端没有太大影响++
+> 如果把 生成Excel的工作交给前端浏览器去完成，后端这是做一个数据发包，而浏览器拿到数据后在自己本地客户端执行生成文件，占用的CPU资源也是客户端的，即使再大的数据也对服务端没有太大影响
 
 ### 三、技术框架
 
 - [https://github.com/SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) （又名js-xlsx，npm库名称为xlsx，node库也叫node-xlsx，以下简称JX），免费版不支持样式调整。
 - [https://github.com/protobi/js-xlsx](https://github.com/protobi/js-xlsx) （npm库命名为xlsx-style，以下简称XS）基于JX二次开发，使其支持样式调整，但其开发停留在2017年，所基于的JX版本老旧，缺失许多方法。因而诞生了这个项目。
-- [https://github.com/Ctrl-Ling/XLSX-Style-Utils](https://github.com/Ctrl-Ling/XLSX-Style-Utils) 以下简称 XSU，其本体为xlsxStyle.utils.js
+- [https://github.com/Ctrl-Ling/XLSX-Style-Utils](https://github.com/Ctrl-Ling/XLSX-Style-Utils) 简称 XSU，其本体为xlsxStyle.utils.js
 
 
 ### 五、核心包描述
 
 - xlsx.core.min.js JX最新版核心文件，建议在将网页表格导成workbook时使用其方法
 - xlsxStyle.core.min.js XS最新版核心文件，因为其原本命名与JX一样，避免冲突改名成xlsxStyle
-- xlsxStyle.utils.js 基于XS的方法二次封装，更好的控制导出excel的样式。以下简称XSU
+- xlsxStyle.utils.js 基于XS的方法二次封装，更好的控制导出excel的样式。简称XSU
