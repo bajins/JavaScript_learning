@@ -136,7 +136,9 @@ const convertToTitle = function (n) {
  * @returns {string|string}
  */
 function convertTo26(num) {
-    num = num === 0 ? 1 : num;
+    if (num <= 0) {
+        throw RangeError("值不能小于等于0");
+    }
     if (num <= 26) {
         return String.fromCharCode(num + 64)
     } else {
