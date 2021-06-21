@@ -41,7 +41,7 @@
      * 导出excel
      */
     exportXlsxPopulate = (titleArray, data, fileName) => {
-        XlsxPopulate.fromBlankAsync().then(workbook => {
+        XlsxPopulate.fromBlankAsync().then(workbook => { // 创建Excel
             /**
              * 10进制转26进制
              *
@@ -131,7 +131,7 @@
             return workbook.outputAsync({
                 type: ""
             });
-        }).then(function (blob) {
+        }).then(function (blob) { // 下载Excel
             if (window.navigator && window.navigator.msSaveOrOpenBlob) {
                 // If IE, you must uses a different method.
                 window.navigator.msSaveOrOpenBlob(blob, fileName);
@@ -145,7 +145,7 @@
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
             }
-        }).catch(function (err) {
+        }).catch(function (err) { // 执行错误
             console.log(err.message || err);
             throw err;
         });
