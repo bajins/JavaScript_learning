@@ -39,12 +39,12 @@ var x = "我的\
 https://www.bajins.com";
 console.log(x);
 
-var x = "我的"+
-    "博客"+
+var x = "我的" +
+    "博客" +
     "https://www.bajins.com";
 console.log(x);
 
-var x =['我的',
+var x = ['我的',
     '博客',
     'https://www.bajins.com'
 ].join('');
@@ -53,15 +53,16 @@ console.log(x);
 var f = function () {/*
       我的博客：
       https://www.bajins.com
-*/};
+*/
+};
 
 // 定义一个实现多行字符串的函数
 Function.prototype.multiLine = function () {
     var str = this.toString().split('\n');
-    return str.slice(1, str.length - 1 ).join('\n');
+    return str.slice(1, str.length - 1).join('\n');
 }
 
-Function.prototype.getMultiLine = function() {
+Function.prototype.getMultiLine = function () {
     var lines = this.toString();
     return lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
 }
@@ -81,15 +82,15 @@ console.log(x);
  */
 
 var x = "我的博客${?}";
-x=x.replace("${?}","https://www.bajins.com");
+x = x.replace("${?}", "https://www.bajins.com");
 console.log(x);
 
-var b="博客";
+var b = "博客";
 var x = "我的" + b + "https://www.bajins.com";
 console.log(x);
 
 // ECMAScript6语法
-var b="博客";
+var b = "博客";
 var x = `我的${b}https://www.bajins.com`;
 console.log(x);
 
@@ -115,8 +116,60 @@ let str = textArry.join('');
 let name = "bajins";
 // 提取首字母转换为大写并与其余的字母拼接起来(3种方法)
 var name = name.charAt(0).toUpperCase() + name.slice(1);
-var name = name.slice(0,1).toUpperCase() + name.slice(1);
-var name = name.substring(0,1).toUpperCase() + name.substring(1);
+var name = name.slice(0, 1).toUpperCase() + name.slice(1);
+var name = name.substring(0, 1).toUpperCase() + name.substring(1);
 var name = name.replace(name.charAt(0), name.charAt(0).toUpperCase());
 
 
+/**
+ * ======================================== String to Bytes ========================================
+ */
+
+function stringToBytes(str) {
+    let ch, st, re = [];
+    for (let i = 0; i < str.length; i++) {
+        ch = str.charCodeAt(i); // get char
+        st = []; // set up "stack"
+        do {
+            st.push(ch & 0xFF); // push byte to stack
+            ch = ch >> 8; // shift value down by 1 byte
+        } while (ch);
+        // add stack contents to result
+        // done because chars have "wrong" endianness
+        re = re.concat(st.reverse());
+    }
+    // return an array of bytes
+    return re;
+}
+
+/**
+ * 字符串转byte数组
+ */
+function strToBytes(str) {
+    const bytes = [];
+    let len, c;
+    len = str.length;
+    for (let i = 0; i < len; i++) {
+        c = str.charCodeAt(i);
+        if (c >= 0x010000 && c <= 0x10FFFF) {
+            bytes.push(((c >> 18) & 0x07) | 0xF0);
+            bytes.push(((c >> 12) & 0x3F) | 0x80);
+            bytes.push(((c >> 6) & 0x3F) | 0x80);
+            bytes.push((c & 0x3F) | 0x80);
+        } else if (c >= 0x000800 && c <= 0x00FFFF) {
+            bytes.push(((c >> 12) & 0x0F) | 0xE0);
+            bytes.push(((c >> 6) & 0x3F) | 0x80);
+            bytes.push((c & 0x3F) | 0x80);
+        } else if (c >= 0x000080 && c <= 0x0007FF) {
+            bytes.push(((c >> 6) & 0x1F) | 0xC0);
+            bytes.push((c & 0x3F) | 0x80);
+        } else {
+            bytes.push(c & 0xFF);
+        }
+    }
+    return bytes;
+}
+
+function bin2String(array) {
+    return String.fromCharCode.apply(String, array);
+}
