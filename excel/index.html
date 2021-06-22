@@ -25,7 +25,7 @@
        style='border-collapse:collapse;table-layout:fixed;'></table>
 <script>
     function testXlsxPopulate() {
-        let titleArray = [{"组织编码": true}, {"检具型号编码": true}, {"检定类型": true}, {"项目编码": true}, {"检查方法": true}, {"标准": true}, {"耗时": true}, {"标准方法": true}, {"项目名称": true}, "备注"]
+        let titleArray = [{"组织编码": true}, {"检具型号编码": true}, {"检定类型": true}, {"项目编码": true}, {"检查方法": true}, {"标准": true}, {"耗时": true}, {"标准方法": true}, {"项目名称": true}, "备注", "test"]
         let data = [
             ["0001", "jianjuxinghao-bm-02-24-1", "内检", "jdxm-bm02-24-12", "指定值", "a", "1", "1", "项目名字a"],
             ["0001", "jianjuxinghao-bm-02-24-1", "外检", "jdxm-bm02-24-12", "一般值", "b", "2", "1", "项目名字b"],
@@ -58,33 +58,6 @@
                     return convertTo26(~~((num - 1) / 26)) + convertTo26(num % 26 || 26);
                 }
             }
-            /**
-             * 字符串转byte数组
-             */
-            function stringToBytes(str) {
-                const bytes = [];
-                let len, c;
-                len = str.length;
-                for (let i = 0; i < len; i++) {
-                    c = str.charCodeAt(i);
-                    if (c >= 0x010000 && c <= 0x10FFFF) {
-                        bytes.push(((c >> 18) & 0x07) | 0xF0);
-                        bytes.push(((c >> 12) & 0x3F) | 0x80);
-                        bytes.push(((c >> 6) & 0x3F) | 0x80);
-                        bytes.push((c & 0x3F) | 0x80);
-                    } else if (c >= 0x000800 && c <= 0x00FFFF) {
-                        bytes.push(((c >> 12) & 0x0F) | 0xE0);
-                        bytes.push(((c >> 6) & 0x3F) | 0x80);
-                        bytes.push((c & 0x3F) | 0x80);
-                    } else if (c >= 0x000080 && c <= 0x0007FF) {
-                        bytes.push(((c >> 6) & 0x1F) | 0xC0);
-                        bytes.push((c & 0x3F) | 0x80);
-                    } else {
-                        bytes.push(c & 0xFF);
-                    }
-                }
-                return bytes;
-            }
 
             /**
              * 计算单元格宽度
@@ -92,23 +65,21 @@
             function getCellWidth(value) {
                 // 判断是否为null或undefined
                 if (value == null) {
-                    return 10
-                } else if (/.*[\u4e00-\u9fa5]+.*$/.test(value)) {// 判断是否包含中文
-                    let bytes = value.length;
-                    for (let i = bytes; i--;) {
+                    return 10;
+                }
+                value = value.toString();
+                let len = value.length;
+                if (/.*[\u4e00-\u9fa5]+.*$/.test(value)) {// 判断是否包含中文
+                    for (let i = len; i--;) {
                         if (value.charCodeAt(i) > 255) { // ascii码应该在0-255之间
-                            bytes++;
+                            len++;
                         }
                     }
-                    return bytes * 1.4;
-                } else {
-                    return value.toString().length * 1.1;
-                    /* 另一种方案
-                    value = value.toString()
-                    //str.replace(/[^\x00-\xff]/g, '**'); // 将非ascii码转换为2个ascii码
-                    return value.replace(/[\u0391-\uFFE5]/g, 'aa').length
-                    */
                 }
+                // 另一种方案：将非ascii码转换为2个ascii码
+                // len = value.replace(/[^\x00-\xff]/g, '**').length;
+                // len = value.replace(/[\u0391-\uFFE5]/g, '**').length;
+                return len * 1.4;
             }
 
             // 第一个sheet页
@@ -131,7 +102,6 @@
                 }
                 let columnKey = convertTo26(i + 1);
                 // 设置A列宽
-                // wb.column(columnKey).width(stringToBytes(key).length);
                 wb.column(columnKey).width(getCellWidth(key));
                 // 表头
                 wb.cell(columnKey + "1").value(key)
