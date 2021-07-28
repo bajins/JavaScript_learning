@@ -3,6 +3,87 @@
  * toFixed 小数点后指定位数取整，从小数点开始数起
  */
 
+/**
+ * https://segmentfault.com/a/1190000019114128
+ * @param arg1
+ * @param arg2
+ * @param operator
+ * @returns {any|number}
+ */
+var operationNumber = function (arg1, arg2, operator) {
+    var oper = ['+', '-', '*', '/'];
+    // 不合法的运算
+    if (isNaN(arg1) || isNaN(arg2) || oper.indexOf(operator) < 0) {
+        return NaN;
+    }
+    // 除以0
+    if (operator === '/' && Number(arg2) === 0) {
+        return Infinity;
+    }
+    // 和0相乘
+    if (operator === '*' && Number(arg2) === 0) {
+        return 0;
+    }
+    // 相等两个数字相减
+    if ((arg1 === arg2 || Number(arg1) === Number(arg2)) && operator === '-') {
+        return 0;
+    }
+    var r1, r2, max, _r1, _r2;
+    try {
+        r1 = arg1.toString().split(".")[1].length
+    } catch (e) {
+        r1 = 0
+    }
+    try {
+        r2 = arg2.toString().split(".")[1].length
+    } catch (e) {
+        r2 = 0
+    }
+    max = Math.max(r1, r2)
+    _r1 = max - r1;
+    _r2 = max - r2;
+    if (_r1 !== 0) {
+        arg1 = arg1 + '0'.repeat(_r1)
+    }
+    if (_r2 !== 0) {
+        arg2 = arg2 + '0'.repeat(_r2)
+    }
+    arg1 = Number(arg1.toString().replace('.', ''))
+    arg2 = Number(arg2.toString().replace('.', ''))
+    var r3 = operator === '*' ? (max * 2) : (operator === '/' ? 0 : max);
+    var newNum = eval(arg1 + operator + arg2);
+
+    if (r3 !== 0) {
+        var nStr = newNum.toString();
+        nStr = nStr.replace(/^-/, '');
+        if (nStr.length < r3 + 1) {
+            nStr = '0'.repeat(r3 + 1 - nStr.length) + nStr;
+        }
+        nStr = nStr.replace(new RegExp('(\\\d{' + r3 + '})$'), '.$1');
+        if (newNum < 0) {
+            nStr = '-' + nStr;
+        }
+        newNum = nStr * 1;
+    }
+    return newNum;
+}
+//加法
+Number.prototype.myAdd = function (arg2) {
+    return operationNumber(this, arg2, '+');
+}
+//减法
+Number.prototype.mySub = function (arg2) {
+    return operationNumber(this, arg2, '-');
+}
+//乘法
+Number.prototype.myMul = function (arg2) {
+    return operationNumber(this, arg2, '*');
+}
+// 除法
+Number.prototype.myDiv = function (arg2) {
+    return operationNumber(this, arg2, '/');
+}
+
 
 /**
  * 加
@@ -186,3 +267,24 @@ const ConvertNum = function (str) {
     }
     return n;
 };
+
+
+/**
+ * num : 一个整数
+ * charSet : 一个字符集
+ */
+function base(num, charSet) {
+    // 个位以内，直接返回
+    if (num < charSet.length) {
+        return charSet.substr(num, 1);
+    }
+    // 递归个位以上的部分
+    const high = Math.floor(num / charSet.length);
+    const unit = num % charSet.length;
+    return base(high, charSet) + charSet.substr(unit, 1);
+}
+
+// 以下调用输出 0 - 32 的16进制形式：
+for (let i = 0; i <= 32; i++) {
+    document.write(base(i, '0123456789ABCDEF') + ' ');
+}
