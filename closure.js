@@ -1,5 +1,5 @@
 /**
- * 封包闭包
+ * 原生封包闭包
  */
 (function () {
     // 全局对象
@@ -21,6 +21,21 @@
     }
 })(window);
 
+!function (w) {
+    // 全局对象
+    var utils = function () {
+
+    };
+    // 兼容AMD,CMD和原生JS
+    if (typeof define === "function" && (define.amd || define.cmd)) {
+        define(function () {
+            return new utils();
+        });
+    } else {
+        w.utils = new utils();
+    }
+}(window);
+
 ;(function () {
     var utils = function () {
         // ...
@@ -40,6 +55,11 @@
 }).call(function () {
     return this || (typeof window !== 'undefined' ? window : global);
 });
+
+
+/**
+ * jQuery 封包闭包
+ */
 
 $(function (w) {
     // 全局对象
