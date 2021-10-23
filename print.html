@@ -1,7 +1,7 @@
 <!--
  * @Author: https://www.bajins.com
  * @Date: 2021-06-23 10:59:22
- * @LastEditTime: 2021-06-23 12:36:52
+ * @LastEditTime: 2021-10-23 13:47:33
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: print.html
@@ -14,11 +14,8 @@
  * https://bluetooth.rocks/tweets
  * https://github.com/GoogleChrome/web.dev/blob/main/src/site/content/en/blog/bluetooth/index.md
  * https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API
- * 网络蓝牙规范 https://github.com/WebBluetoothCG/web-bluetooth
  * ESC/POS指令 https://www.jianshu.com/p/dd6ca0054298
- *
- *
- * https://github.com/freedom-git/EscPosEncoder
+ * 
 -->
 <!DOCTYPE html>
 <html>
@@ -307,6 +304,141 @@
             }
             //console.log(mac);    
             alert("Done");
+        }
+    </script>
+    <script type="application/javascript">
+        // https://ruizer.github.io/2019/07/23/window-print-%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%93%E5%8D%B0%E5%85%A8%E9%9B%86
+        /** 给打印增加默认样式 */
+        function myStyle(mode) {
+            mode = mode.toLowerCase();
+            mode = mode === 'landscape' ? mode : 'portrait';
+            const style = document.createElement('style');
+            style.type = 'text/css';
+            style.innerHTML = `@page { size: ${mode}; margin: 10mm;}`;
+            return style;
+        }
+
+        /** @description 动态打印 */
+        export const printPartial = (dom, { title = document.title, mode = 'portrait' } = {},) => {
+            if (!(dom && dom.outerHTML)) return;
+            let copyDom = document.createElement('span');
+            const styleDom = document.querySelectorAll('style, link, meta');
+            const titleDom = document.createElement('title');
+            titleDom.innerText = title;
+            copyDom.appendChild(titleDom);
+            Array.from(styleDom).forEach(item => {
+                copyDom.appendChild(item.cloneNode(true));
+            });
+            copyDom.appendChild(myStyle(mode));
+            const headTemp = copyDom.innerHTML;
+            copyDom = null;
+            const iframeDom = document.createElement('iframe');
+            const attrObj = {
+                height: 0,
+                width: 0,
+                border: 0,
+                wmode: 'Opaque',
+            };
+            const styleObj = {
+                position: 'absolute',
+                top: '-999px',
+                left: '-999px',
+            };
+            Object.entries(attrObj).forEach(([key, value]) => {
+                iframeDom.setAttribute(key, value);
+            });
+            Object.entries(styleObj).forEach(([key, value]) => {
+                iframeDom.style[key] = value;
+            });
+
+            iframeDom.srcdoc = `<html><head>${headTemp}</head></head><body style="-webkit-print-color-adjust: exact;">${dom.outerHTML}</body></html>`;
+
+            document.body.insertBefore(iframeDom, document.body.children[0]);
+            const iframeWin = iframeDom.contentWindow;
+            iframeDom.onload = () => {
+                iframeWin.focus();
+                iframeWin.print();
+                document.body.removeChild(iframeDom);
+            };
+        };
+    </script>
+    <script type="application/javascript">
+        // https://developer.mozilla.org/zh-CN/docs/Web/API/Window/beforeprint_event
+        function beforePrint() {// 打印前事件
+            console.log('Before Print');
+        }
+
+        function afterPrint() {// 打印后事件
+            console.log('After Print');
+        }
+
+        if (window.matchMedia) {
+            var mediaQueryList = window.matchMedia('print');
+            mediaQueryList.addListener(function (mql) {
+                (mql.matches) ? beforePrint() : afterPrint();
+            });
+        } else {
+            // basically a fallback for < IE11
+            window.addEventListener('beforeprint', beforePrint, false);
+            window.addEventListener('afterprint', afterPrint, false);
+        }
+
+        window.onbeforeprint = function () {// 打印前事件
+            console.log('Before Print');
+        };
+
+        window.onafterprint = function () {// 打印后事件
+            console.log('After Print');
+        };
+        var oldstr = document.body.innerHTML;
+        var headstr = "<html><head><title></title></head><body>";
+        var footstr = "</body></html>";
+        // 执行隐藏打印区域不需要打印的内容
+        document.getElementById("otherpho").style.display = "none";
+        var printData = document.getElementById("studentPhoTable").innerHTML; //获得 div 里的所有 html 数据
+        /*
+        方式一：在浏览器新窗口渲染打印的内容，调用打印
+        */
+        var wind = window.open("", "newwin", "toolbar=no,scrollbars=yes,menubar=no"); // 打开新的浏览器弹窗
+        wind.document.body.innerHTML = headstr + printData + footstr;
+        wind.print();
+        wind.close(); // 关闭浏览器弹窗
+
+        /*
+        方式二：隐藏打印内容，调用打印
+        */
+        document.body.innerHTML = headstr + printData + footstr;
+        window.print();
+
+        //打印结束后，放开隐藏内容
+        document.getElementById("otherpho").style.display = "block";
+        document.body.innerHTML = oldstr;
+
+        /**
+         * 方式三：在页面创建一个iframe渲染打印内容，调用打印
+         */
+        function doPrint3() {
+            // 判断iframe是否存在，不存在则创建iframe
+            var iframe = document.getElementById("print-iframe");
+            if (!iframe) {
+                var el = document.getElementById("printcontent");
+                iframe = document.createElement('iframe');
+                iframe.setAttribute("id", "print-iframe");
+                iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-500px;top:-500px;');
+                document.body.appendChild(iframe);
+            }
+            const iframeWin = iframe.contentWindow;
+            const doc = iframeWin.document;
+            // 自定义样式
+            //doc.write("<LINK rel="stylesheet" type="text/css" href="css/print.css">");
+            doc.write("<title>我是title头部信息</title>");
+            doc.write('<div>' + el.innerHTML + '</div>');
+            doc.close();
+            iframe.onload = function () { // 每次iframe设置src之后都会执行这部分代码
+                iframeWin.focus();
+                iframeWin.print();
+                document.body.removeChild(iframe);
+            }
         }
     </script>
 </body>
