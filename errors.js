@@ -9,11 +9,11 @@
  * 6. `URIError` URI错误
  */
 
-try{
+try {
     // 可能发生错误的代码
-}catch(err){
+} catch (err) {
     // 只有发生错误时才执行的代码
-}finally{
+} finally {
     // 无论是否出错，肯定都要执行的代码
 }
 
@@ -25,7 +25,8 @@ class CustomError extends Error {
     }
 }
 
-class TimeoutError extends CustomError {}
+class TimeoutError extends CustomError {
+}
 
 module.exports = {
     TimeoutError,

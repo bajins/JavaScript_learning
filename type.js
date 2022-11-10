@@ -41,16 +41,16 @@ console.log(null instanceof Null);              // 报错
  * 如果创建一个对象，更改它的原型，这种方式也变得不可靠了。
  */
 
-console.log((2).constructor == Number);                 // true
-console.log((true).constructor == Boolean);             // true
-console.log(('str').constructor == String);             // true
-console.log(([]).constructor == Array);                 // true
+console.log((2).constructor === Number);                 // true
+console.log(true.constructor === Boolean);             // true
+console.log(('str').constructor === String);             // true
+console.log(([]).constructor === Array);                 // true
 console.log((function () {
-}).constructor == Function);   // true
-console.log(({}).constructor == Object);                // true
-console.log((new Date()).constructor == Date);          // true
-console.log((undefined).constructor == Undefined);      // 报错
-console.log((null).constructor == Null);                // 报错
+}).constructor === Function);   // true
+console.log(({}).constructor === Object);                // true
+console.log((new Date()).constructor === Date);          // true
+console.log(undefined.constructor === Undefined);      // 报错
+console.log(null.constructor === Null);                // 报错
 
 
 /**
@@ -58,8 +58,7 @@ console.log((null).constructor == Null);                // 报错
  *
  * `Object.prototype.toString.call()`即使改变对象的原型，依然会显示正确的数据类型
  */
-
-var a = Object.prototype.toString;
+const a = Object.prototype.toString;
 console.log(a.call(2));             // [object Number]
 console.log(a.call(true));          // [object Boolean]
 console.log(a.call('str'));         // [object String]
@@ -70,3 +69,15 @@ console.log(a.call({}));            // [object Object]
 console.log(a.call(new Date()));    // [object Date]
 console.log(a.call(undefined));     // [object Undefined]
 console.log(a.call(null));          // [object Null]
+
+
+/**
+ * 原型比较
+ */
+class Person {
+}
+
+let p1 = new Person()
+console.log(Object.getPrototypeOf(p1) === Person.prototype);
+console.log(p1.__proto__ === Person.prototype);
+console.log(p1.constructor.prototype === Person.prototype);

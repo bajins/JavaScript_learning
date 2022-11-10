@@ -40,3 +40,42 @@ function spliceIntoChunks(arr, chunkSize) {
 
 const arr = [1, 2, 3, 4, 5, 6, 7, 8];
 console.log(spliceIntoChunks(arr, 2));
+
+
+/**
+ * JS数组合并
+ */
+
+// ES6 解构
+// https://baijiahao.baidu.com/s?id=1728150000803824413
+// https://blog.csdn.net/weixin_43795643/article/details/104705299
+// https://blog.csdn.net/m0_47634044/article/details/124852391
+let arr = [];
+let arr1 = ["1", "2", "3"];
+arr = [...arr, ...arr1];
+
+// let option = {"1": "", "2": ""};
+// option = {...{}, ...option}; // 合并对象
+// Object.assign({}, ...option);
+
+arr.push(...arr1); // arr变成合并后的样子，arr1值不变
+arr.unshift(...arr1);
+
+arr.push.call(arr, ...arr1); // 原数组值不改变，返回拼接后数组的长度
+arr.unshift.call(arr, ...arr1);
+
+arr.push.apply(arr, arr1); // 原数组值不改变，返回拼接后数组的长度
+arr.unshift.apply(arr, arr1);
+
+// 遍历方法：forEach、map、filter、every、for、for in、for of等。
+// 添加方法：push（后追加）、unshift（前追加）等。
+
+// arr.concat(array)
+
+// 原数组值不改变。
+// 默认会把数组中的数字类型转成字符串类型。
+// 数组的项是引用类型时会自动生成'[object Object]'，造成数据丢失或错误。
+arr = (arr.join(',') + ',' + arr1.join(',')).split(',');
+
+arr.splice(arr.length, 0, ...arr1); // 原数组值不变，返回空数组
+

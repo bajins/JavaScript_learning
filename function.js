@@ -16,3 +16,16 @@ function test({name = '测试', age = 1}) {
 
 function test({name = '测试', age = 1} = {}) {// 双重默认值
 }
+
+
+// 防重复触发
+stopReapeatEvent = function (obj) {
+    if (obj.callFlag) return true;
+    obj.callFlag = !obj.callFlag;
+    clearTimeout(obj.iTime);
+    obj.iTime = setTimeout(function () {
+        obj.callFlag = !obj.callFlag;
+    }, 100);
+}
+//调用
+// if (stopReapeatEvent(arguments.callee)) return;
